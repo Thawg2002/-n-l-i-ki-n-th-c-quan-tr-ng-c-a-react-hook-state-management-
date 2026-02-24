@@ -1,28 +1,40 @@
 
-import React, { useState } from "react";
-import { UserContext } from "./UserContext";
+import { useState } from "react";
 import LoginForm from "./LoginForm";
-import UserProfile from "./UserProfile";
 import UpdateNameForm from "./UpdateNameForm";
-import ZustandDemo from "./zustand/ZustandDemo";
+import { UserContext } from "./UserContext";
+import UserProfile from "./UserProfile";
 import ReduxDemo from "./redux/ReduxDemo";
-import UseReducerDemo from "./useReducer/UseReducerDemo";
 import UseCallbackDemo from "./useCallback/UseCallbackDemo";
 import UseMemoDemo from "./useMemo/UseMemoDemo";
+import ComplexReducerDemo from "./useReducer/ComplexReducerDemo";
+import ZustandDemo from "./zustand/ZustandDemo";
 
-// App: quản lý state user, cung cấp context và hiển thị các component con
+
+// Helper component để tạo các phần (section) riêng biệt, dễ quan sát
+const Section = ({ title, children, color = "#2196f3" }) => (
+  <div style={{
+    border: `2px solid ${color}`,
+    borderRadius: '12px',
+    padding: '20px',
+    marginBottom: '30px',
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+  }}>
+    <h3 style={{ marginTop: 0, color: color, borderBottom: `1px solid ${color}`, paddingBottom: '8px' }}>
+      {title}
+    </h3>
+    {children}
+  </div>
+);
+
 const App = () => {
-  // State user: null nếu chưa đăng nhập, object nếu đã đăng nhập
   const [user, setUser] = useState(null);
 
-  // Hàm đăng nhập
   const login = name => setUser({ name });
-  // Hàm đăng xuất
   const logout = () => setUser(null);
-  // Hàm cập nhật tên
   const updateName = name => setUser(u => ({ ...u, name }));
 
-  // Truyền xuống context
   const contextValue = {
     user,
     isLoggedIn: !!user,
@@ -33,25 +45,43 @@ const App = () => {
 
   return (
     <UserContext.Provider value={contextValue}>
-      <div style={{ maxWidth: 500, margin: '40px auto', fontFamily: 'Arial' }}>
-        <h2>So sánh useContext, Zustand, Redux</h2>
-        <ol>
-          <li>App tạo UserContext và giữ state user.</li>
-          <li>App truyền user và các hàm login, logout, updateName xuống Provider.</li>
-          <li>Các component con sử dụng context để đăng nhập, đăng xuất, đổi tên.</li>
-        </ol>
-        <div style={{ marginBottom: 32 }}>
-          <h3>useContext Demo</h3>
+      <div style={{ maxWidth: 800, margin: '40px auto', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '16px' }}>
+        <h1 style={{ textAlign: 'center', color: '#333' }}>🚀 Ôn tập React Hooks & State Management</h1>
+        <p style={{ textAlign: 'center', color: '#666', marginBottom: '40px' }}>
+          Giao diện được chia thành từng phần để bạn dễ dàng theo dõi bản chất từng loại Hook.
+        </p>
+
+        {/* 1. Context API Section */}
+        <Section title="1. useContext Demo (Global State nhẹ)" color="#e91e63">
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>Dùng khi muốn truyền dữ liệu xuyên qua nhiều cấp component mà không cần prop-drilling.</p>
           <LoginForm />
           <UserProfile />
           <UpdateNameForm />
-        </div>
-        <UseReducerDemo />
-        <UseCallbackDemo />
-        <UseMemoDemo />
-        <ZustandDemo />
-        <ReduxDemo />
-        {/* Có thể thêm nhiều component khác cùng dùng context này */}
+        </Section>
+
+        {/* 2. useReducer Section */}
+        <Section title="2. useReducer Demo (Logic phức tạp)" color="#4caf50">
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>Dùng khi state có nhiều logic phụ thuộc hoặc cần quản lý tập trung qua Actions.</p>
+          {/* <UseReducerDemo /> */}
+          <ComplexReducerDemo />
+        </Section>
+
+        {/* 3. Performance Hooks Section */}
+        <Section title="3. Performance Hooks (Tối ưu hóa)" color="#ff9800">
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>useCallback tránh tạo lại hàm, useMemo tránh tính toán lại những thứ nặng nhọc.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <UseCallbackDemo />
+            <UseMemoDemo />
+          </div>
+        </Section>
+
+        {/* 4. External Stores Section */}
+        <Section title="4. External State Libraries" color="#673ab7">
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>Zustand và Redux Toolkit dùng cho các ứng dụng thực tế quy mô lớn.</p>
+          <ZustandDemo />
+          <ReduxDemo />
+        </Section>
+
       </div>
     </UserContext.Provider>
   );
